@@ -1,10 +1,8 @@
+import 'package:flutter_btc_wallet/homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_btc_wallet/src/rust/api/simple.dart';
-import 'package:flutter_btc_wallet/src/rust/frb_generated.dart';
 
-Future<void> main() async {
-  await RustLib.init();
-  runApp(const MyApp());
+void main() {
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,14 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('flutter_rust_bridge quickstart')),
-        body: Center(
-          child: Text(
-            'Action: Call Rust `greet("Tom")`\nResult: `${greet(name: "Tom")}`',
-          ),
-        ),
+      title: 'Namer App',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
       ),
+      home: HomePage(),
     );
   }
 }
