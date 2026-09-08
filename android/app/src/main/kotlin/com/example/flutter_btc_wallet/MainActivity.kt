@@ -1,4 +1,4 @@
-package com.example.flutter_btc_wallet
+package com.hirokuma.flutter_btc_wallet
 
 import io.flutter.embedding.android.FlutterActivity
 

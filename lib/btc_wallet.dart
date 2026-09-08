@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_btc_wallet/src/rust/api/wrapper.dart';
 
-class BtcWalletPage extends StatelessWidget {
-  const BtcWalletPage({super.key});
+class BtcWalletPage extends StatefulWidget {
+  const BtcWalletPage({super.key, required this.documentsPath});
+
+  final String documentsPath;
+
+  @override
+  State<BtcWalletPage> createState() => _BtcWalletPageState();
+}
+
+class _BtcWalletPageState extends State<BtcWalletPage> {
+  MutexBtcWallet? _wallet;
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +21,29 @@ class BtcWalletPage extends StatelessWidget {
         children: [
           BigCard(balance: BigInt.from(123)),
           SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () async {
+              final walletPath = '${widget.documentsPath}/wallet.db';
+
+              try {
+                final wallet = await createWallet(
+                  network: 'regtest',
+                  electrumServer: 'tcp://192.168.0.41:50001',
+                  passphrase: 'abcdefg12345',
+                  walletPath: walletPath,
+                );
+                setState(() {
+                  _wallet = wallet;
+                });
+                debugPrint('wallet created: $walletPath');
+              } catch (e) {
+                debugPrint('createWallet error: $e');
+              }
+            },
+            child: Text("Create Wallet"),
+          ),
+          SizedBox(height: 10),
+          Text(_wallet != null ? 'Wallet ready' : 'No wallet'),
         ],
       ),
     );

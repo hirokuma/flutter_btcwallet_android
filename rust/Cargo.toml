@@ -7,10 +7,12 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-flutter_rust_bridge = "=2.13.0"
-
-btc_wallet = {git = "https://github.com/hirokuma/rust-btc-keypath-wallet.git", version = "0.5.0"}
 anyhow = "1.0.104"
+flutter_rust_bridge = "=2.13.0"
+rusqlite = "0.31.0"
+
+btc_wallet = {git = "https://github.com/hirokuma/rust-btc-keypath-wallet.git", version = "0.5.1"}
+wallet_utils = { git = "https://github.com/hirokuma/rust-wallet-utils.git", version = "0.2.0" }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

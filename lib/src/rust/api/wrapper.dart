@@ -7,29 +7,27 @@ import '../frb_generated.dart';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<(MutexBtcWallet, String)> createWallet({
-  required Config config,
-  required PathBuf walletPath,
+// These functions are ignored because they are not marked as `pub`: `load_xprv`, `store_xprv`
+
+Future<MutexBtcWallet> createWallet({
+  required String network,
+  required String electrumServer,
+  required String passphrase,
+  required String walletPath,
 }) => RustLib.instance.api.crateApiWrapperCreateWallet(
-  config: config,
+  network: network,
+  electrumServer: electrumServer,
+  passphrase: passphrase,
   walletPath: walletPath,
 );
 
 Future<MutexBtcWallet> loadWallet({
-  required Config config,
-  required String xprv,
-  required PathBuf walletPath,
+  required String passphrase,
+  required String walletPath,
 }) => RustLib.instance.api.crateApiWrapperLoadWallet(
-  config: config,
-  xprv: xprv,
+  passphrase: passphrase,
   walletPath: walletPath,
 );
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Config>>
-abstract class Config implements RustOpaqueInterface {}
-
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Mutex < BtcWallet >>>
 abstract class MutexBtcWallet implements RustOpaqueInterface {}
-
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<PathBuf>>
-abstract class PathBuf implements RustOpaqueInterface {}

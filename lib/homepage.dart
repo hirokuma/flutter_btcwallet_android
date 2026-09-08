@@ -3,7 +3,9 @@ import 'package:flutter_btc_wallet/btc_wallet.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.documentsPath});
+
+  final String documentsPath;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,7 +24,7 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Container(
                   color: Theme.of(context).colorScheme.primaryContainer,
-                  child: BtcWalletPage(),
+                  child: BtcWalletPage(documentsPath: widget.documentsPath),
                 ),
               ),
             ],
