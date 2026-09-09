@@ -9,25 +9,59 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `load_xprv`, `store_xprv`
 
-Future<MutexBtcWallet> createWallet({
-  required String network,
-  required String electrumServer,
-  required String passphrase,
-  required String walletPath,
-}) => RustLib.instance.api.crateApiWrapperCreateWallet(
-  network: network,
-  electrumServer: electrumServer,
-  passphrase: passphrase,
-  walletPath: walletPath,
-);
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<WalletWrapper>>
+abstract class WalletWrapper implements RustOpaqueInterface {
+  Future<BigInt> balance();
 
-Future<MutexBtcWallet> loadWallet({
-  required String passphrase,
-  required String walletPath,
-}) => RustLib.instance.api.crateApiWrapperLoadWallet(
-  passphrase: passphrase,
-  walletPath: walletPath,
-);
+  static Future<WalletWrapper> createWallet({
+    required String network,
+    required String electrumServer,
+    required String passphrase,
+    required String walletPath,
+  }) => RustLib.instance.api.crateApiWrapperWalletWrapperCreateWallet(
+    network: network,
+    electrumServer: electrumServer,
+    passphrase: passphrase,
+    walletPath: walletPath,
+  );
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Mutex < BtcWallet >>>
-abstract class MutexBtcWallet implements RustOpaqueInterface {}
+  static Future<WalletWrapper> loadWallet({
+    required String passphrase,
+    required String walletPath,
+  }) => RustLib.instance.api.crateApiWrapperWalletWrapperLoadWallet(
+    passphrase: passphrase,
+    walletPath: walletPath,
+  );
+
+  Future<String> newAddress();
+
+  Future<SendResult> sendTx({
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  });
+
+  Future<SendResult> sendTxSingleAnypay({
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  });
+}
+
+class SendResult {
+  final String tx;
+  final String txid;
+
+  const SendResult({required this.tx, required this.txid});
+
+  @override
+  int get hashCode => tx.hashCode ^ txid.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SendResult &&
+          runtimeType == other.runtimeType &&
+          tx == other.tx &&
+          txid == other.txid;
+}

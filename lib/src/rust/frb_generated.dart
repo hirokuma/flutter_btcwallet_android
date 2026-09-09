@@ -69,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 580462878;
+  int get rustContentHash => 486521692;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -81,28 +81,50 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<MutexBtcWallet> crateApiWrapperCreateWallet({
+  Future<BigInt> crateApiWrapperWalletWrapperBalance({
+    required WalletWrapper that,
+  });
+
+  Future<WalletWrapper> crateApiWrapperWalletWrapperCreateWallet({
     required String network,
     required String electrumServer,
     required String passphrase,
     required String walletPath,
   });
 
-  Future<void> crateApiInitInitApp();
-
-  Future<MutexBtcWallet> crateApiWrapperLoadWallet({
+  Future<WalletWrapper> crateApiWrapperWalletWrapperLoadWallet({
     required String passphrase,
     required String walletPath,
   });
 
+  Future<String> crateApiWrapperWalletWrapperNewAddress({
+    required WalletWrapper that,
+  });
+
+  Future<SendResult> crateApiWrapperWalletWrapperSendTx({
+    required WalletWrapper that,
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  });
+
+  Future<SendResult> crateApiWrapperWalletWrapperSendTxSingleAnypay({
+    required WalletWrapper that,
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  });
+
+  Future<void> crateApiInitInitApp();
+
   RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_MutexBtcWallet;
+  get rust_arc_increment_strong_count_WalletWrapper;
 
   RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_MutexBtcWallet;
+  get rust_arc_decrement_strong_count_WalletWrapper;
 
   CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_MutexBtcWalletPtr;
+  get rust_arc_decrement_strong_count_WalletWrapperPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -114,7 +136,43 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<MutexBtcWallet> crateApiWrapperCreateWallet({
+  Future<BigInt> crateApiWrapperWalletWrapperBalance({
+    required WalletWrapper that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 1,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_u_64,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiWrapperWalletWrapperBalanceConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWrapperWalletWrapperBalanceConstMeta =>
+      const TaskConstMeta(
+        debugName: "WalletWrapper_balance",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<WalletWrapper> crateApiWrapperWalletWrapperCreateWallet({
     required String network,
     required String electrumServer,
     required String passphrase,
@@ -131,57 +189,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 1,
+            funcId: 2,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData:
-              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet,
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper,
           decodeErrorData: sse_decode_AnyhowException,
         ),
-        constMeta: kCrateApiWrapperCreateWalletConstMeta,
+        constMeta: kCrateApiWrapperWalletWrapperCreateWalletConstMeta,
         argValues: [network, electrumServer, passphrase, walletPath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiWrapperCreateWalletConstMeta =>
+  TaskConstMeta get kCrateApiWrapperWalletWrapperCreateWalletConstMeta =>
       const TaskConstMeta(
-        debugName: "create_wallet",
+        debugName: "WalletWrapper_create_wallet",
         argNames: ["network", "electrumServer", "passphrase", "walletPath"],
       );
 
   @override
-  Future<void> crateApiInitInitApp() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 2,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiInitInitAppConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiInitInitAppConstMeta =>
-      const TaskConstMeta(debugName: "init_app", argNames: []);
-
-  @override
-  Future<MutexBtcWallet> crateApiWrapperLoadWallet({
+  Future<WalletWrapper> crateApiWrapperWalletWrapperLoadWallet({
     required String passphrase,
     required String walletPath,
   }) {
@@ -200,28 +231,176 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         },
         codec: SseCodec(
           decodeSuccessData:
-              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet,
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper,
           decodeErrorData: sse_decode_AnyhowException,
         ),
-        constMeta: kCrateApiWrapperLoadWalletConstMeta,
+        constMeta: kCrateApiWrapperWalletWrapperLoadWalletConstMeta,
         argValues: [passphrase, walletPath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiWrapperLoadWalletConstMeta => const TaskConstMeta(
-    debugName: "load_wallet",
-    argNames: ["passphrase", "walletPath"],
-  );
+  TaskConstMeta get kCrateApiWrapperWalletWrapperLoadWalletConstMeta =>
+      const TaskConstMeta(
+        debugName: "WalletWrapper_load_wallet",
+        argNames: ["passphrase", "walletPath"],
+      );
+
+  @override
+  Future<String> crateApiWrapperWalletWrapperNewAddress({
+    required WalletWrapper that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 4,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiWrapperWalletWrapperNewAddressConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWrapperWalletWrapperNewAddressConstMeta =>
+      const TaskConstMeta(
+        debugName: "WalletWrapper_new_address",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<SendResult> crateApiWrapperWalletWrapperSendTx({
+    required WalletWrapper that,
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+            that,
+            serializer,
+          );
+          sse_encode_String(outAddr, serializer);
+          sse_encode_u_64(amount, serializer);
+          sse_encode_f_64(feeRate, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_send_result,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiWrapperWalletWrapperSendTxConstMeta,
+        argValues: [that, outAddr, amount, feeRate],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWrapperWalletWrapperSendTxConstMeta =>
+      const TaskConstMeta(
+        debugName: "WalletWrapper_send_tx",
+        argNames: ["that", "outAddr", "amount", "feeRate"],
+      );
+
+  @override
+  Future<SendResult> crateApiWrapperWalletWrapperSendTxSingleAnypay({
+    required WalletWrapper that,
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+            that,
+            serializer,
+          );
+          sse_encode_String(outAddr, serializer);
+          sse_encode_u_64(amount, serializer);
+          sse_encode_f_64(feeRate, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_send_result,
+          decodeErrorData: sse_decode_AnyhowException,
+        ),
+        constMeta: kCrateApiWrapperWalletWrapperSendTxSingleAnypayConstMeta,
+        argValues: [that, outAddr, amount, feeRate],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiWrapperWalletWrapperSendTxSingleAnypayConstMeta =>
+      const TaskConstMeta(
+        debugName: "WalletWrapper_send_tx_single_anypay",
+        argNames: ["that", "outAddr", "amount", "feeRate"],
+      );
+
+  @override
+  Future<void> crateApiInitInitApp() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiInitInitAppConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiInitInitAppConstMeta =>
+      const TaskConstMeta(debugName: "init_app", argNames: []);
 
   RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_MutexBtcWallet => wire
-      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet;
+  get rust_arc_increment_strong_count_WalletWrapper => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper;
 
   RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_MutexBtcWallet => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet;
+  get rust_arc_decrement_strong_count_WalletWrapper => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
@@ -230,21 +409,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MutexBtcWallet
-  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet(
+  WalletWrapper
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
     dynamic raw,
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return MutexBtcWalletImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return WalletWrapperImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
-  MutexBtcWallet
-  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet(
+  WalletWrapper
+  dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
     dynamic raw,
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    return MutexBtcWalletImpl.frbInternalDcoDecode(raw as List<dynamic>);
+    return WalletWrapperImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  WalletWrapper
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return WalletWrapperImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -254,9 +442,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double dco_decode_f_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as double;
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
+  }
+
+  @protected
+  SendResult dco_decode_send_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return SendResult(
+      tx: dco_decode_String(arr[0]),
+      txid: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  BigInt dco_decode_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
   }
 
   @protected
@@ -285,24 +497,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MutexBtcWallet
-  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet(
+  WalletWrapper
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return MutexBtcWalletImpl.frbInternalSseDecode(
+    return WalletWrapperImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
   }
 
   @protected
-  MutexBtcWallet
-  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet(
+  WalletWrapper
+  sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return MutexBtcWalletImpl.frbInternalSseDecode(
+    return WalletWrapperImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  WalletWrapper
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return WalletWrapperImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -316,10 +540,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double sse_decode_f_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getFloat64();
+  }
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
     return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
+  SendResult sse_decode_send_result(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_tx = sse_decode_String(deserializer);
+    var var_txid = sse_decode_String(deserializer);
+    return SendResult(tx: var_tx, txid: var_txid);
+  }
+
+  @protected
+  BigInt sse_decode_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
   }
 
   @protected
@@ -362,26 +606,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
-  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet(
-    MutexBtcWallet self,
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+    WalletWrapper self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-      (self as MutexBtcWalletImpl).frbInternalSseEncode(move: true),
+      (self as WalletWrapperImpl).frbInternalSseEncode(move: true),
       serializer,
     );
   }
 
   @protected
   void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMutexBtcWallet(
-    MutexBtcWallet self,
+  sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+    WalletWrapper self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
-      (self as MutexBtcWalletImpl).frbInternalSseEncode(move: null),
+      (self as WalletWrapperImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerWalletWrapper(
+    WalletWrapper self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as WalletWrapperImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -393,6 +650,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_f_64(double self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putFloat64(self);
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
     SseSerializer serializer,
@@ -400,6 +663,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint8List(self);
+  }
+
+  @protected
+  void sse_encode_send_result(SendResult self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.tx, serializer);
+    sse_encode_String(self.txid, serializer);
+  }
+
+  @protected
+  void sse_encode_u_64(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
   }
 
   @protected
@@ -433,21 +709,49 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 }
 
 @sealed
-class MutexBtcWalletImpl extends RustOpaque implements MutexBtcWallet {
+class WalletWrapperImpl extends RustOpaque implements WalletWrapper {
   // Not to be used by end users
-  MutexBtcWalletImpl.frbInternalDcoDecode(List<dynamic> wire)
+  WalletWrapperImpl.frbInternalDcoDecode(List<dynamic> wire)
     : super.frbInternalDcoDecode(wire, _kStaticData);
 
   // Not to be used by end users
-  MutexBtcWalletImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+  WalletWrapperImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
     : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
 
   static final _kStaticData = RustArcStaticData(
     rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_MutexBtcWallet,
+        RustLib.instance.api.rust_arc_increment_strong_count_WalletWrapper,
     rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_MutexBtcWallet,
+        RustLib.instance.api.rust_arc_decrement_strong_count_WalletWrapper,
     rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_MutexBtcWalletPtr,
+        RustLib.instance.api.rust_arc_decrement_strong_count_WalletWrapperPtr,
+  );
+
+  Future<BigInt> balance() =>
+      RustLib.instance.api.crateApiWrapperWalletWrapperBalance(that: this);
+
+  Future<String> newAddress() =>
+      RustLib.instance.api.crateApiWrapperWalletWrapperNewAddress(that: this);
+
+  Future<SendResult> sendTx({
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  }) => RustLib.instance.api.crateApiWrapperWalletWrapperSendTx(
+    that: this,
+    outAddr: outAddr,
+    amount: amount,
+    feeRate: feeRate,
+  );
+
+  Future<SendResult> sendTxSingleAnypay({
+    required String outAddr,
+    required BigInt amount,
+    required double feeRate,
+  }) => RustLib.instance.api.crateApiWrapperWalletWrapperSendTxSingleAnypay(
+    that: this,
+    outAddr: outAddr,
+    amount: amount,
+    feeRate: feeRate,
   );
 }

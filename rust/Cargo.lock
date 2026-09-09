@@ -1261,6 +1261,7 @@ dependencies = [
  "anyhow",
  "btc_wallet",
  "flutter_rust_bridge",
+ "log",
  "rusqlite",
  "wallet_utils",
 ]
