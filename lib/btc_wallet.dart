@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_btc_wallet/src/rust/api/wrapper.dart';
 
 class BtcWalletPage extends StatefulWidget {
-  const BtcWalletPage({super.key, required this.documentsPath});
+  const BtcWalletPage({super.key, required this.dataPath});
 
-  final String documentsPath;
+  final String dataPath;
 
   @override
   State<BtcWalletPage> createState() => _BtcWalletPageState();
@@ -23,7 +23,7 @@ class _BtcWalletPageState extends State<BtcWalletPage> {
           SizedBox(height: 10),
           ElevatedButton(
             onPressed: () async {
-              final walletPath = '${widget.documentsPath}/wallet.db';
+              final walletPath = '${widget.dataPath}/wallet.db';
 
               try {
                 final wallet = await createWallet(
